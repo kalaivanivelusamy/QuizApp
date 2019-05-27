@@ -30,31 +30,13 @@ class ViewController: UIViewController {
     var questionNum:Int=0
     var ansBtn:[String:String]=[:]
     var gridBtn:[String:UIImageView]=[:]
-
+    var isUserSelectedAns:Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
 
-    
-    @IBAction func tapBtnClicked(_ sender: UIButton) {
-        
-    tapBtn.isHidden = true
-    self.view.isOpaque = false
-    clearView()
-    tapBtn.isHidden = false
 
-    if (questionNum<2){
-        questionNum = questionNum + 1
-        showNextQuestion(num: questionNum)
-    }
-    if (questionNum>=2){
-    tapBtn.isHidden = true
-        
-    }
-        
-    }
-    
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -71,15 +53,39 @@ class ViewController: UIViewController {
         self.progreeView.layer.cornerRadius = 5.0
 
         getQuestions()
-      // adjustButton()
+        
     }
-    
-    
-    
-    
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+   
+    //MARK:- Tap button methods
+    
+    @IBAction func tapBtnClicked(_ sender: UIButton) {
+        
+        tapBtn.isHidden = true
+        self.view.isOpaque = false
+        clearView()
+        tapBtn.isHidden = false
+        
+        if (questionNum<2){
+            questionNum = questionNum + 1
+            showNextQuestion(num: questionNum)
+        }
+        hideTapButtons()
+    }
+    
+    private func hideTapButtons(){
+        
+        if (questionNum>=2){
+            tapBtn.isHidden = true
+        }
+        else{
+            tapBtn.isHidden = false
+        }
     }
 
     //MARK:- action methods
@@ -104,6 +110,8 @@ class ViewController: UIViewController {
 
     }
     
+    // MARK:- Timer methods
+    
     func startTimer()
     {
         if self.progressTimer == nil {
@@ -119,16 +127,22 @@ class ViewController: UIViewController {
         }
     }
     
-    
-    @IBAction func viewTapped(_ sender: Any) {
-//        tapBtn.isHidden = true
-//        self.view.isOpaque = false
-//        clearView()
-//        questionNum = questionNum + 1
-       // showNextQuestion(num: questionNum)
-        
+    @objc  func updateProgressView() {
+        progreeView.progress += 0.1
+        progreeView.setProgress(progreeView.progress, animated: true)
+        if (progreeView.progress == 1.0){
+            if (isUserSelectedAns == false){
+                getBtn(tag: questionNum)?.backgroundColor = UIColor.red
+            }
+            self.stopTimer()
+            progreeView.progress=0
+            progreeView.setProgress(progreeView.progress, animated: true)
+            hideView()
+        }
     }
+ 
     
+    // MARK:- Set up views
     func clearView(){
         resetAllBtns()
         self.view.backgroundColor=UIColor.white
@@ -141,7 +155,9 @@ class ViewController: UIViewController {
     func hideView(){
         resetAllBtns()
         self.view.backgroundColor=UIColor.gray
-        self.view.alpha = 0.7
+        self.view.alpha = 0.8
+        self.questionView.alpha = 1.0
+        
         tapBtn.isHidden = false
         btnContainer.isUserInteractionEnabled = false
     }
@@ -153,26 +169,12 @@ class ViewController: UIViewController {
         answerFourBtn.backgroundColor=UIColor.lightGray
     }
     
-    @objc  func updateProgressView() {
-        progreeView.progress += 0.1
-        progreeView.setProgress(progreeView.progress, animated: true)
-            if (progreeView.progress == 1.0){
-              //  self.progressTimer!.invalidate()
-                self.stopTimer()
-                progreeView.progress=0
-                progreeView.setProgress(progreeView.progress, animated: true)
-                hideView()
-            }
-}
+    
     
     @IBAction func helloButton(sender:UIButton){
         
         sender.setTitle("its growing",for:.normal)
-        //        if myLabel.text !=  sender.titleLabel?.text {
-        //            myLabel.text = sender.titleLabel?.text
-        //        } else {
-        //            myLabel.text = "Hello Pizza"
-        //        }
+      
     }
     
    func getBtn(tag:Int)->UIImageView?{
@@ -192,7 +194,8 @@ class ViewController: UIViewController {
 
    
     @IBAction func answerBtnClicked(_ sender: UIButton) {
-        
+       
+        isUserSelectedAns = true //change the correct answer tracking view if time is up but user not answered
         self.stopTimer()
         self.progreeView.progress = 0
         btnContainer.isUserInteractionEnabled = false
@@ -206,8 +209,7 @@ class ViewController: UIViewController {
 
         }
         
-        tapBtn.isHidden = false
-
+        hideTapButtons()
         
         print("You clicked the answer \(String(describing: sender.titleLabel?.text))")
         print("But the answer \(String(describing:self.dataModel![random].correctAnswer))")
@@ -312,6 +314,8 @@ class ViewController: UIViewController {
     
     
     func showNextQuestion(num:Int){
+        
+        isUserSelectedAns = false
          resetAllBtns()
         btnContainer.isUserInteractionEnabled = true
         displayOptions(num: num)
