@@ -100,10 +100,9 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     
     @IBAction func tapBtnClicked(_ sender: UIButton) {
         
-        tapBtn.isHidden = true
         self.view.isOpaque = false
         clearView()
-        tapBtn.isHidden = false
+        //tapBtn.isHidden = false
         
         if (questionNum<2){
             questionNum = questionNum + 1
@@ -114,14 +113,16 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     
     private func hideTapButtons(){
         
-        if (questionNum>=2){
+        if (questionNum>=2){ //number of questions to be shown is 3 else hide progress view and tap button
             tapBtn.isHidden = true
-            //showAd(answerFourBtn)
+            self.progreeView.isHidden = true
             showAds()
         }
         else{
-            tapBtn.isHidden = false
+            tapBtn.isHidden = true
+            self.progreeView.isHidden = false
         }
+
     }
 
     //MARK:- action methods
@@ -185,6 +186,7 @@ class ViewController: UIViewController,GADInterstitialDelegate {
         self.view.backgroundColor=UIColor.white
         self.view.alpha = 1.0
         tapBtn.isHidden = true
+        self.progreeView.isHidden = false
         btnContainer.isUserInteractionEnabled = true
         
     }
@@ -196,6 +198,8 @@ class ViewController: UIViewController,GADInterstitialDelegate {
         self.questionView.alpha = 1.0
         
         tapBtn.isHidden = false
+        self.progreeView.isHidden = true
+
         btnContainer.isUserInteractionEnabled = false
     }
     
@@ -204,6 +208,10 @@ class ViewController: UIViewController,GADInterstitialDelegate {
         answerTwoBtn.backgroundColor=UIColor.lightGray
         answerThreeBtn.backgroundColor=UIColor.lightGray
         answerFourBtn.backgroundColor=UIColor.lightGray
+        
+//        self.progreeView.isHidden = false
+//        tapBtn.isHidden = true
+
     }
     
     
@@ -246,7 +254,9 @@ class ViewController: UIViewController,GADInterstitialDelegate {
 
         }
         
-        hideTapButtons()
+      //  hideTapButtons()
+        self.tapBtn.isHidden = false
+        self.progreeView.isHidden = true
         
         print("You clicked the answer \(String(describing: sender.titleLabel?.text))")
         print("But the answer \(String(describing:self.dataModel![random].correctAnswer))")
@@ -351,7 +361,6 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     
     
     func showNextQuestion(num:Int){
-        
         isUserSelectedAns = false
          resetAllBtns()
         btnContainer.isUserInteractionEnabled = true
