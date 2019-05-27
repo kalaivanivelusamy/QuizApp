@@ -4,8 +4,9 @@
 //
 
 import UIKit
+import GoogleMobileAds
 
-class ViewController: UIViewController {
+class ViewController: UIViewController,GADInterstitialDelegate {
 
     @IBOutlet weak var questionView: UITextView!
     @IBOutlet weak var answerOneBtn: UIButton!
@@ -32,8 +33,41 @@ class ViewController: UIViewController {
     var gridBtn:[String:UIImageView]=[:]
     var isUserSelectedAns:Bool = false
     
+    var interstitialAd : GADInterstitial!
+
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    
+    
+    private func showAds(){
+        //interstitial Ad
+        //ca-app-pub-3313120708713385/7501886898
+        self.interstitialAd = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        let request = GADRequest()
+        request.testDevices = [kGADSimulatorID,"2077ef9a63d2b398840261c8221a0c9b"]
+        self.interstitialAd.load(request)
+        self.interstitialAd = reloadInterstitialAd()
+    }
+    
+    private func interstitialDidDismissScreen(ad: GADInterstitial!) {
+        self.interstitialAd = reloadInterstitialAd()
+    }
+    
+    func reloadInterstitialAd() -> GADInterstitial {
+        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        interstitial.delegate = self
+        interstitial.load(GADRequest())
+        return interstitial
+    }
+    
+    func showAd(_ sender: Any) {
+    
+    if self.interstitialAd.isReady {
+    self.interstitialAd.present(fromRootViewController: self)
+    }
     }
 
 
@@ -82,6 +116,8 @@ class ViewController: UIViewController {
         
         if (questionNum>=2){
             tapBtn.isHidden = true
+            //showAd(answerFourBtn)
+            showAds()
         }
         else{
             tapBtn.isHidden = false
@@ -130,6 +166,7 @@ class ViewController: UIViewController {
     @objc  func updateProgressView() {
         progreeView.progress += 0.1
         progreeView.setProgress(progreeView.progress, animated: true)
+       
         if (progreeView.progress == 1.0){
             if (isUserSelectedAns == false){
                 getBtn(tag: questionNum)?.backgroundColor = UIColor.red
