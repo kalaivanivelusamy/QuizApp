@@ -7,18 +7,50 @@
 //
 
 import UIKit
+import GoogleMobileAds
 
-class AdsViewController: UIViewController {
+class AdsViewController: UIViewController,GADInterstitialDelegate {
+    
+    var interstitialAd : GADInterstitial!
+
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        setUpAd()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    
+    private func setUpAd(){
+        //interstitial Ad
+        //ca-app-pub-3313120708713385/7501886898
+        self.interstitialAd = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        let request = GADRequest()
+        request.testDevices = [kGADSimulatorID,"2077ef9a63d2b398840261c8221a0c9b"]
+        self.interstitialAd.load(request)
+        self.interstitialAd = reloadInterstitialAd()
+    }
+    
+    private func interstitialDidDismissScreen(ad: GADInterstitial!) {
+        self.interstitialAd = reloadInterstitialAd()
+    }
+    
+    func reloadInterstitialAd() -> GADInterstitial {
+        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
+        interstitial.delegate = self
+        interstitial.load(GADRequest())
+        return interstitial
+    }
+    
+    func showAd(_ sender: Any) {
+        
+        if self.interstitialAd.isReady {
+            self.interstitialAd.present(fromRootViewController: self)
+        }
     }
     
 

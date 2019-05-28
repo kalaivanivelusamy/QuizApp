@@ -4,9 +4,7 @@
 //
 
 import UIKit
-import GoogleMobileAds
-
-class ViewController: UIViewController,GADInterstitialDelegate {
+class ViewController: UIViewController {
 
     @IBOutlet weak var questionView: UITextView!
     @IBOutlet weak var answerOneBtn: UIButton!
@@ -33,7 +31,8 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     var gridBtn:[String:UIImageView]=[:]
     var isUserSelectedAns:Bool = false
     
-    var interstitialAd : GADInterstitial!
+    
+    let PROGRESS_BAR_INITIAL_VALUE = 5.0 as Float
 
     
     override func viewDidLoad() {
@@ -42,33 +41,7 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     
     
     
-    private func showAds(){
-        //interstitial Ad
-        //ca-app-pub-3313120708713385/7501886898
-        self.interstitialAd = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
-        let request = GADRequest()
-        request.testDevices = [kGADSimulatorID,"2077ef9a63d2b398840261c8221a0c9b"]
-        self.interstitialAd.load(request)
-        self.interstitialAd = reloadInterstitialAd()
-    }
     
-    private func interstitialDidDismissScreen(ad: GADInterstitial!) {
-        self.interstitialAd = reloadInterstitialAd()
-    }
-    
-    func reloadInterstitialAd() -> GADInterstitial {
-        let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
-        interstitial.delegate = self
-        interstitial.load(GADRequest())
-        return interstitial
-    }
-    
-    func showAd(_ sender: Any) {
-    
-    if self.interstitialAd.isReady {
-    self.interstitialAd.present(fromRootViewController: self)
-    }
-    }
 
 
     override func viewWillAppear(_ animated: Bool) {
@@ -83,7 +56,7 @@ class ViewController: UIViewController,GADInterstitialDelegate {
         gridBtn.updateValue(ans2GridImgView, forKey: "tag1")
         gridBtn.updateValue(ans3GridImgView, forKey: "tag2")
 
-        self.progreeView.progress=0;
+        self.progreeView.progress=PROGRESS_BAR_INITIAL_VALUE;
         self.progreeView.layer.cornerRadius = 5.0
 
         getQuestions()
@@ -113,7 +86,7 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     
     private func hideTapButtons(){
         
-        if (questionNum>=2){ //number of questions to be shown is 3 else hide progress view and tap button
+        if (questionNum>2){ //number of questions to be shown is 3 else hide progress view and tap button
             tapBtn.isHidden = true
             self.progreeView.isHidden = true
             showAds()
@@ -165,15 +138,15 @@ class ViewController: UIViewController,GADInterstitialDelegate {
     }
     
     @objc  func updateProgressView() {
-        progreeView.progress += 0.1
+        progreeView.progress -= 0.1
         progreeView.setProgress(progreeView.progress, animated: true)
        
-        if (progreeView.progress == 1.0){
+        if (progreeView.progress == 0.0){
             if (isUserSelectedAns == false){
                 getBtn(tag: questionNum)?.backgroundColor = UIColor.red
             }
             self.stopTimer()
-            progreeView.progress=0
+            progreeView.progress=PROGRESS_BAR_INITIAL_VALUE
             progreeView.setProgress(progreeView.progress, animated: true)
             hideView()
         }
@@ -242,7 +215,7 @@ class ViewController: UIViewController,GADInterstitialDelegate {
        
         isUserSelectedAns = true //change the correct answer tracking view if time is up but user not answered
         self.stopTimer()
-        self.progreeView.progress = 0
+        self.progreeView.progress = PROGRESS_BAR_INITIAL_VALUE
         btnContainer.isUserInteractionEnabled = false
         if sender.tag == random{
             sender.backgroundColor = UIColor.green
