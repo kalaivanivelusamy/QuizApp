@@ -12,11 +12,18 @@ import GoogleMobileAds
 class AdsViewController: UIViewController,GADInterstitialDelegate {
     
     var interstitialAd : GADInterstitial!
+    let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
 
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        interstitial.delegate = self
         setUpAd()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        showAd()
     }
 
     override func didReceiveMemoryWarning() {
@@ -39,6 +46,10 @@ class AdsViewController: UIViewController,GADInterstitialDelegate {
         self.interstitialAd = reloadInterstitialAd()
     }
     
+    func interstitialDidReceiveAd(_ ad: GADInterstitial) {
+        self.interstitialAd.present(fromRootViewController: self)
+    }
+
     func reloadInterstitialAd() -> GADInterstitial {
         let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
         interstitial.delegate = self
@@ -46,7 +57,7 @@ class AdsViewController: UIViewController,GADInterstitialDelegate {
         return interstitial
     }
     
-    func showAd(_ sender: Any) {
+   public func showAd() {
         
         if self.interstitialAd.isReady {
             self.interstitialAd.present(fromRootViewController: self)

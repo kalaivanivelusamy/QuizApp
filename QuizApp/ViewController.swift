@@ -39,11 +39,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
     }
     
-    
-    
-    
-
-
+  
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -56,6 +52,7 @@ class ViewController: UIViewController {
         gridBtn.updateValue(ans2GridImgView, forKey: "tag1")
         gridBtn.updateValue(ans3GridImgView, forKey: "tag2")
 
+        
         self.progreeView.progress=PROGRESS_BAR_INITIAL_VALUE;
         self.progreeView.layer.cornerRadius = 5.0
 
@@ -75,13 +72,18 @@ class ViewController: UIViewController {
         
         self.view.isOpaque = false
         clearView()
-        //tapBtn.isHidden = false
+        hideTapButtons()
+
         
         if (questionNum<2){
             questionNum = questionNum + 1
             showNextQuestion(num: questionNum)
         }
-        hideTapButtons()
+        else{
+            let adVC=AdsViewController()
+            self.present(adVC, animated: true, completion: nil)
+            
+        }
     }
     
     private func hideTapButtons(){
@@ -89,7 +91,6 @@ class ViewController: UIViewController {
         if (questionNum>2){ //number of questions to be shown is 3 else hide progress view and tap button
             tapBtn.isHidden = true
             self.progreeView.isHidden = true
-            showAds()
         }
         else{
             tapBtn.isHidden = true
@@ -182,8 +183,6 @@ class ViewController: UIViewController {
         answerThreeBtn.backgroundColor=UIColor.lightGray
         answerFourBtn.backgroundColor=UIColor.lightGray
         
-//        self.progreeView.isHidden = false
-//        tapBtn.isHidden = true
 
     }
     
