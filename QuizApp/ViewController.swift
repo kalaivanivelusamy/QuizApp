@@ -15,9 +15,7 @@ class ViewController: UIViewController {
     @IBOutlet weak var widthCon: NSLayoutConstraint!
     @IBOutlet weak var progreeView: UIProgressView!
     @IBOutlet weak var tapBtn: UIButton!
-
-    @IBOutlet weak var btnContainer: UIView!
-    
+   // @IBOutlet weak var btnContainer: UIView!
     @IBOutlet weak var ansGridImgView: UIImageView!
     @IBOutlet weak var ans3GridImgView: UIImageView!
     @IBOutlet weak var ans2GridImgView: UIImageView!
@@ -30,9 +28,12 @@ class ViewController: UIViewController {
     var ansBtn:[String:String]=[:]
     var gridBtn:[String:UIImageView]=[:]
     var isUserSelectedAns:Bool = false
-    
+    var totalCorrectAns:Int = 0
     
     let PROGRESS_BAR_INITIAL_VALUE = 5.0 as Float
+    
+    @IBOutlet var dummyBtn: UIButton!
+
 
     
     override func viewDidLoad() {
@@ -54,9 +55,12 @@ class ViewController: UIViewController {
 
         
         self.progreeView.progress=PROGRESS_BAR_INITIAL_VALUE;
-        self.progreeView.layer.cornerRadius = 5.0
+        self.progreeView.transform = self.progreeView.transform.scaledBy(x: 1, y: 5)
 
         getQuestions()
+        
+        dummyBtn.setTitle("This text is too much", for: .normal)
+
         
     }
 
@@ -73,7 +77,6 @@ class ViewController: UIViewController {
         self.view.isOpaque = false
         clearView()
         hideTapButtons()
-
         
         if (questionNum<2){
             questionNum = questionNum + 1
@@ -81,6 +84,7 @@ class ViewController: UIViewController {
         }
         else{
             let adVC=AdsViewController()
+            adVC.totalAnswers = totalCorrectAns
             self.present(adVC, animated: true, completion: nil)
             
         }
@@ -104,8 +108,10 @@ class ViewController: UIViewController {
     func customizeAnswerButtons(){
         
         answerOneBtn.setTitle("This text is too much", for: .normal)
-        answerOneBtn.layer.cornerRadius = 5.0
         answerTwoBtn.setTitle("This text is too much", for: .normal)
+        answerTwoBtn.titleLabel?.textAlignment = .left
+        answerFourBtn.titleLabel?.textAlignment = .left
+
         answerThreeBtn.titleLabel?.text = "8"
         answerFourBtn.titleLabel?.text = "8"
 
@@ -161,7 +167,7 @@ class ViewController: UIViewController {
         self.view.alpha = 1.0
         tapBtn.isHidden = true
         self.progreeView.isHidden = false
-        btnContainer.isUserInteractionEnabled = true
+      //  btnContainer.isUserInteractionEnabled = true
         
     }
     
@@ -174,7 +180,7 @@ class ViewController: UIViewController {
         tapBtn.isHidden = false
         self.progreeView.isHidden = true
 
-        btnContainer.isUserInteractionEnabled = false
+       // btnContainer.isUserInteractionEnabled = false
     }
     
     func resetAllBtns(){
@@ -183,7 +189,6 @@ class ViewController: UIViewController {
         answerThreeBtn.backgroundColor=UIColor.lightGray
         answerFourBtn.backgroundColor=UIColor.lightGray
         
-
     }
     
     
@@ -210,13 +215,15 @@ class ViewController: UIViewController {
     }
 
    
+    //MARK:- answer button click methods
     @IBAction func answerBtnClicked(_ sender: UIButton) {
        
         isUserSelectedAns = true //change the correct answer tracking view if time is up but user not answered
         self.stopTimer()
         self.progreeView.progress = PROGRESS_BAR_INITIAL_VALUE
-        btnContainer.isUserInteractionEnabled = false
+       // btnContainer.isUserInteractionEnabled = false
         if sender.tag == random{
+            totalCorrectAns=totalCorrectAns+1
             sender.backgroundColor = UIColor.green
             getBtn(tag: questionNum)?.backgroundColor = UIColor.green
         }
@@ -245,6 +252,19 @@ class ViewController: UIViewController {
         )
         answerOneBtn.layoutIfNeeded() // need this to update the button's titleLabel's size
     }
+    
+    
+    func showNextQuestion(num:Int){
+        isUserSelectedAns = false
+        resetAllBtns()
+       // btnContainer.isUserInteractionEnabled = true
+        displayOptions(num: num)
+        self.startTimer()
+    }
+    
+  
+    
+    //MARK:- Networking methods
     
     private func getQuestions(){
         
@@ -295,6 +315,8 @@ class ViewController: UIViewController {
 
     }
     
+    //MARK:- view styling methods
+    
     func displayOptions(num:Int){
         
         self.questionView.text = self.dataModel![num].question
@@ -328,17 +350,14 @@ class ViewController: UIViewController {
         default:
             break
         }
+        
+        dummyBtn.setTitle(self.answerOneBtn.titleLabel?.text, for: .normal)
+
        // resetAllBtns()
     }
     
     
-    func showNextQuestion(num:Int){
-        isUserSelectedAns = false
-         resetAllBtns()
-        btnContainer.isUserInteractionEnabled = true
-        displayOptions(num: num)
-        self.startTimer()
-    }
+    
     
 }
 

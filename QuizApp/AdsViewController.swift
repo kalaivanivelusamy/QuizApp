@@ -12,9 +12,11 @@ import GoogleMobileAds
 class AdsViewController: UIViewController,GADInterstitialDelegate {
     
     var interstitialAd : GADInterstitial!
+    var totalAnswers:Int = 0
     let interstitial = GADInterstitial(adUnitID: "ca-app-pub-3940256099942544/4411468910")
 
-
+    @IBOutlet weak var scoreLbl: UILabel!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         interstitial.delegate = self
@@ -23,6 +25,9 @@ class AdsViewController: UIViewController,GADInterstitialDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        //self.view.backgroundColor = UIColor.yellow
+       self.scoreLbl?.text = "\(totalAnswers)"
+        
         showAd()
     }
 
@@ -43,7 +48,7 @@ class AdsViewController: UIViewController,GADInterstitialDelegate {
     }
     
     private func interstitialDidDismissScreen(ad: GADInterstitial!) {
-        self.interstitialAd = reloadInterstitialAd()
+       // self.interstitialAd = reloadInterstitialAd()
     }
     
     func interstitialDidReceiveAd(_ ad: GADInterstitial) {
@@ -59,9 +64,11 @@ class AdsViewController: UIViewController,GADInterstitialDelegate {
     
    public func showAd() {
         
-        if self.interstitialAd.isReady {
+        if (self.interstitialAd.hasBeenUsed == false && self.interstitialAd.isReady) {
             self.interstitialAd.present(fromRootViewController: self)
         }
+    
+    
     }
     
 
