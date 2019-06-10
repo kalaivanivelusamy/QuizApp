@@ -59,7 +59,7 @@ class ViewController: UIViewController {
 
         getQuestions()
         
-        dummyBtn.setTitle("This text is too much", for: .normal)
+//        dummyBtn.setTitle("This text is too much", for: .normal)
 
         
     }
@@ -124,8 +124,16 @@ class ViewController: UIViewController {
         answerTwoBtn.layer.cornerRadius = 5.0
         answerThreeBtn.layer.cornerRadius = 5.0
         answerFourBtn.layer.cornerRadius = 5.0
-
+        
+        answerOneBtn.titleLabel?.numberOfLines = 0
+        answerTwoBtn.titleLabel?.numberOfLines = 0
+        answerThreeBtn.titleLabel?.numberOfLines = 0
+        answerFourBtn.titleLabel?.numberOfLines = 0
+        
+        answerOneBtn.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
     }
+    
+    
     
     // MARK:- Timer methods
     
@@ -167,6 +175,7 @@ class ViewController: UIViewController {
         self.view.alpha = 1.0
         tapBtn.isHidden = true
         self.progreeView.isHidden = false
+        enableAnswerbuttons(isEnabled:true)
       //  btnContainer.isUserInteractionEnabled = true
         
     }
@@ -180,6 +189,8 @@ class ViewController: UIViewController {
         tapBtn.isHidden = false
         self.progreeView.isHidden = true
 
+        enableAnswerbuttons(isEnabled:false)
+
        // btnContainer.isUserInteractionEnabled = false
     }
     
@@ -191,7 +202,13 @@ class ViewController: UIViewController {
         
     }
     
-    
+    func enableAnswerbuttons(isEnabled:Bool) {
+        answerOneBtn.isUserInteractionEnabled = isEnabled
+        answerTwoBtn.isUserInteractionEnabled = isEnabled
+        answerThreeBtn.isUserInteractionEnabled = isEnabled
+        answerFourBtn.isUserInteractionEnabled = isEnabled
+        
+    }
     
     @IBAction func helloButton(sender:UIButton){
         
@@ -222,6 +239,7 @@ class ViewController: UIViewController {
         self.stopTimer()
         self.progreeView.progress = PROGRESS_BAR_INITIAL_VALUE
        // btnContainer.isUserInteractionEnabled = false
+        enableAnswerbuttons(isEnabled: false)
         if sender.tag == random{
             totalCorrectAns=totalCorrectAns+1
             sender.backgroundColor = UIColor.green
@@ -258,6 +276,7 @@ class ViewController: UIViewController {
         isUserSelectedAns = false
         resetAllBtns()
        // btnContainer.isUserInteractionEnabled = true
+        enableAnswerbuttons(isEnabled: true)
         displayOptions(num: num)
         self.startTimer()
     }
@@ -351,7 +370,8 @@ class ViewController: UIViewController {
             break
         }
         
-        dummyBtn.setTitle(self.answerOneBtn.titleLabel?.text, for: .normal)
+       //
+        //dummyBtn.setTitle(self.answerOneBtn.titleLabel?.text, for: .normal)
 
        // resetAllBtns()
     }
