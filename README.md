@@ -1,7 +1,8 @@
 # QuizApp
 
 
-This app will hook you in very first game.
+This iOS app will hook you in very first game.It's interesting and also makes you to learn unknown things.
+
 It challenges your knowledge and current affairs in all sorts of field
 
 Features:
