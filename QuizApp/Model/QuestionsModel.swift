@@ -3,6 +3,7 @@
 //  QuizApp
 //
 
+
 import Foundation
 class Questions{
     
@@ -20,5 +21,5 @@ class Questions{
         self.category=category
         self.type=type
     }
-
+    
 }

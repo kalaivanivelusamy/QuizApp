@@ -20,6 +20,13 @@ class ViewController: UIViewController {
     @IBOutlet weak var ans3GridImgView: UIImageView!
     @IBOutlet weak var ans2GridImgView: UIImageView!
     
+    @IBOutlet weak var screenLoadingIndicator: UIProgressView!
+    @IBOutlet weak var loadingIndicatorView: UIView!
+    @IBOutlet var primaryView: UIView!
+    
+    @IBOutlet weak var loadingIndicatorCategoryName: UILabel!
+    
+    
     var progressTimer:Timer? = nil
     var dataModel:[Questions]?=[]
     var i:Int = 0
@@ -33,8 +40,8 @@ class ViewController: UIViewController {
     let PROGRESS_BAR_INITIAL_VALUE = 5.0 as Float
     
     @IBOutlet var dummyBtn: UIButton!
-
-
+    var categoryId:Int = 0
+    var categoryName:String?=nil
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,10 +50,10 @@ class ViewController: UIViewController {
   
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        tapBtn.isHidden = true
-        questionView.text = "How many bits are in byte?"
-        
+                
+        questionView?.text = "How many bits are in byte?"
+        tapBtn?.isHidden = true
+
         customizeAnswerButtons()
         
         gridBtn.updateValue(ansGridImgView, forKey: "tag0")
@@ -54,9 +61,13 @@ class ViewController: UIViewController {
         gridBtn.updateValue(ans3GridImgView, forKey: "tag2")
 
         
-        self.progreeView.progress=PROGRESS_BAR_INITIAL_VALUE;
-        self.progreeView.transform = self.progreeView.transform.scaledBy(x: 1, y: 5)
+        self.progreeView?.progress=PROGRESS_BAR_INITIAL_VALUE;
+        self.progreeView?.transform = self.progreeView.transform.scaledBy(x: 1, y: 5)
 
+        
+        self.loadingIndicatorView.isHidden = false
+        self.loadingIndicatorCategoryName.text = categoryName
+        
         getQuestions()
         
 //        dummyBtn.setTitle("This text is too much", for: .normal)
@@ -107,30 +118,33 @@ class ViewController: UIViewController {
     
     func customizeAnswerButtons(){
         
-        answerOneBtn.setTitle("This text is too much", for: .normal)
-        answerTwoBtn.setTitle("This text is too much", for: .normal)
-        answerTwoBtn.titleLabel?.textAlignment = .left
-        answerFourBtn.titleLabel?.textAlignment = .left
+        answerOneBtn?.setTitle("This text is too much", for: .normal)
+        answerTwoBtn?.setTitle("This text is too much", for: .normal)
+        answerTwoBtn?.titleLabel?.textAlignment = .left
+        answerFourBtn?.titleLabel?.textAlignment = .left
 
-        answerThreeBtn.titleLabel?.text = "8"
-        answerFourBtn.titleLabel?.text = "8"
+        answerThreeBtn?.titleLabel?.text = "8"
+        answerFourBtn?.titleLabel?.text = "8"
 
         ansBtn.updateValue("answerOneBtn", forKey: "tag0")
         ansBtn.updateValue("answerTwoBtn", forKey: "tag1")
         ansBtn.updateValue("answerThreeBtn", forKey: "tag2")
         ansBtn.updateValue("answerFourBtn", forKey: "tag3")
         
-        answerOneBtn.layer.cornerRadius = 5.0
-        answerTwoBtn.layer.cornerRadius = 5.0
-        answerThreeBtn.layer.cornerRadius = 5.0
-        answerFourBtn.layer.cornerRadius = 5.0
+        answerOneBtn?.layer.cornerRadius = 5.0
+        answerTwoBtn?.layer.cornerRadius = 5.0
+        answerThreeBtn?.layer.cornerRadius = 5.0
+        answerFourBtn?.layer.cornerRadius = 5.0
         
-        answerOneBtn.titleLabel?.numberOfLines = 0
-        answerTwoBtn.titleLabel?.numberOfLines = 0
-        answerThreeBtn.titleLabel?.numberOfLines = 0
-        answerFourBtn.titleLabel?.numberOfLines = 0
+        answerOneBtn?.titleLabel?.numberOfLines = 0
+        answerTwoBtn?.titleLabel?.numberOfLines = 0
+        answerThreeBtn?.titleLabel?.numberOfLines = 0
+        answerFourBtn?.titleLabel?.numberOfLines = 0
         
-        answerOneBtn.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
+        answerOneBtn?.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
+        answerTwoBtn?.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
+        answerThreeBtn?.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
+        answerFourBtn?.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
     }
     
     
@@ -286,8 +300,7 @@ class ViewController: UIViewController {
     //MARK:- Networking methods
     
     private func getQuestions(){
-        
-        let url = URL(string:"https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple")
+        let url = URL(string:"https://opentdb.com/api.php?amount=10&category=\(categoryId)&difficulty=easy&type=multiple")
         let config = URLSessionConfiguration.ephemeral
         let session = URLSession(configuration: config)
         let task = session.dataTask(with: url!, completionHandler: { (data:Data?, response:URLResponse?, error:Error?) in
@@ -312,6 +325,8 @@ class ViewController: UIViewController {
                 
                // Questions qtn = self.dataModel[0] as! Questions
                 DispatchQueue.main.async {[weak self] in
+                    sleep(5)
+                    self?.loadingIndicatorView.isHidden = true;
                     self?.startTimer()
                     self?.displayOptions(num: 0)
                 }
