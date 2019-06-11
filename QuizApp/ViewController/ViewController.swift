@@ -51,7 +51,7 @@ class ViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
                 
-        questionView?.text = "How many bits are in byte?"
+        questionView?.text = ""
         tapBtn?.isHidden = true
 
         customizeAnswerButtons()
@@ -66,6 +66,7 @@ class ViewController: UIViewController {
 
         
         self.loadingIndicatorView.isHidden = false
+        self.loadingIndicatorView.alpha = 0.8
         self.loadingIndicatorCategoryName.text = categoryName
         
         getQuestions()
@@ -118,8 +119,7 @@ class ViewController: UIViewController {
     
     func customizeAnswerButtons(){
         
-        answerOneBtn?.setTitle("This text is too much", for: .normal)
-        answerTwoBtn?.setTitle("This text is too much", for: .normal)
+       
         answerTwoBtn?.titleLabel?.textAlignment = .left
         answerFourBtn?.titleLabel?.textAlignment = .left
 
