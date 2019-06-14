@@ -29,11 +29,11 @@ class ViewController: UIViewController {
     
     var progressTimer:Timer? = nil
     var dataModel:[Questions]?=[]
-    var i:Int = 0
     var random:Int = Int(arc4random_uniform(3) + 1);
     var questionNum:Int=0
     var ansBtn:[String:String]=[:]
     var gridBtn:[String:UIImageView]=[:]
+    var correctAnsBtn:[Int:UIButton]=[:]
     var isUserSelectedAns:Bool = false
     var totalCorrectAns:Int = 0
     
@@ -60,6 +60,10 @@ class ViewController: UIViewController {
         gridBtn.updateValue(ans2GridImgView, forKey: "tag1")
         gridBtn.updateValue(ans3GridImgView, forKey: "tag2")
 
+        correctAnsBtn.updateValue(answerOneBtn, forKey: 0)
+        correctAnsBtn.updateValue(answerTwoBtn, forKey: 1)
+        correctAnsBtn.updateValue(answerThreeBtn, forKey: 2)
+        correctAnsBtn.updateValue(answerFourBtn, forKey: 3)
         
         self.progreeView?.progress=PROGRESS_BAR_INITIAL_VALUE;
         self.progreeView?.transform = self.progreeView.transform.scaledBy(x: 1, y: 5)
@@ -95,10 +99,17 @@ class ViewController: UIViewController {
             showNextQuestion(num: questionNum)
         }
         else{
-            let adVC=AdsViewController()
-            adVC.totalAnswers = totalCorrectAns
-            self.present(adVC, animated: true, completion: nil)
+//            let adVC=AdsViewController()
+//            adVC.totalAnswers = totalCorrectAns
+//            self.present(adVC, animated: true, completion: nil)
             
+            if let questionsViewController = storyboard?.instantiateViewController(
+                withIdentifier: "scoreVC")
+                as? ScoreViewController  {
+                questionsViewController.score = totalCorrectAns
+                present(questionsViewController, animated: true, completion: nil)
+            }
+
         }
     }
     
@@ -260,9 +271,11 @@ class ViewController: UIViewController {
             getBtn(tag: questionNum)?.backgroundColor = UIColor.green
         }
         else{
-        sender.backgroundColor = UIColor.red
+         sender.backgroundColor = UIColor.red
+            var btn:UIButton? = self.correctAnsBtn[random]
+            btn?.backgroundColor = UIColor.green
+        
         getBtn(tag: questionNum)?.backgroundColor = UIColor.red
-
         }
         
       //  hideTapButtons()

@@ -49,6 +49,17 @@ class AdsViewController: UIViewController,GADInterstitialDelegate {
     
     private func interstitialDidDismissScreen(ad: GADInterstitial!) {
        // self.interstitialAd = reloadInterstitialAd()
+        
+        if let questionsViewController = storyboard?.instantiateViewController(
+            withIdentifier: "scoreVC")
+            as? ScoreViewController  {
+            
+            questionsViewController.score=10
+            present(questionsViewController, animated: true, completion: nil)
+        }
+        
+
+        
     }
     
     func interstitialDidReceiveAd(_ ad: GADInterstitial) {
